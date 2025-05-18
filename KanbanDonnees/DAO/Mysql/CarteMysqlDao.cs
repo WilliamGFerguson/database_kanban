@@ -168,7 +168,8 @@ public class CarteMysqlDao : MysqlBaseDao, ICarteDao
                 reader.GetString("description"),
                 reader.GetDateTime("echeance"),
                 reader.GetInt32("ordre"),
-                reader.GetInt32("liste_id")
+                reader.GetInt32("liste_id"),
+                UtilisateurDao.SelectAllByCarteId(reader.GetInt32("id"))
             );
 
         return carte;

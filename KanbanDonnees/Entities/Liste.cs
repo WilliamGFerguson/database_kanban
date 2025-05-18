@@ -13,13 +13,13 @@ public class Liste
     {
     }
 
-    public Liste(int id, string nom, int ordre, int tableauId)
+    public Liste(int id, string nom, int ordre, int tableauId, List<Carte>? cartes = null)
     {
         Id = id;
         Nom = nom;
         Ordre = ordre;
         TableauId = tableauId;
-        Cartes = new List<Carte>();
+        Cartes = cartes ?? new List<Carte>();
     }
 
     public Liste(string nom, int ordre, int tableauId) : this(0, nom, ordre, tableauId)
@@ -55,6 +55,9 @@ public class Liste
         get => _tableauId;
         set => _tableauId = value;
     }
-    
-    // Vous pouvez ajouter le ToString() si vous voulez, mais c'est non nécessaire
+
+    public override string ToString()
+    {
+        return $"{Id} - {Nom} - Ordre: {Ordre} - TableauId: {TableauId}\n";
+    }
 }

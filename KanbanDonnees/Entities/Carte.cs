@@ -15,7 +15,7 @@ public class Carte
     {
     }
 
-    public Carte(int id, string titre, string description, DateTime? echeance, int ordre, int listeId)
+    public Carte(int id, string titre, string description, DateTime? echeance, int ordre, int listeId, List<Utilisateur>? responsables = null)
     {
         Id = id;
         Titre = titre;
@@ -23,7 +23,7 @@ public class Carte
         Echeance = echeance;
         Ordre = ordre;
         ListeId = listeId;
-        Responsables = new List<Utilisateur>();
+        Responsables = responsables ?? new List<Utilisateur>();
     }
 
     public Carte(string titre, string description, DateTime? echeance, int ordre, int listeId) : this(0, titre, description, echeance, ordre, listeId)

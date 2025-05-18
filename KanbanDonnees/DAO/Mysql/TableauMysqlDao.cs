@@ -59,6 +59,10 @@ public class TableauMysqlDao : MysqlBaseDao, ITableauDao
             {
                 tableaux.Add(BuildEntity(reader));
             }
+            foreach (Tableau tableau in tableaux)
+            {
+                Console.WriteLine(tableau.ToString()); ;
+            }
         }
         catch (Exception ex)
         {
@@ -153,7 +157,8 @@ public class TableauMysqlDao : MysqlBaseDao, ITableauDao
     {
         return new Tableau(
                 reader.GetInt32("id"),
-                reader.GetString("nom")
+                reader.GetString("nom"),
+                ListeDao.SelectAllByTableauId(reader.GetInt32("id"))
             );
     }
 }

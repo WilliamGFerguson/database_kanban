@@ -5,11 +5,11 @@ namespace KanbanDonnees.DAO.Mysql;
 
 public class ListeMysqlDao : MysqlBaseDao, IListeDao
 {
-    private CarteMysqlDao carteDao;
+    private CarteMysqlDao CarteDao;
 
     public ListeMysqlDao(string chaineDeConnexion, CarteMysqlDao carteMysqlDao) : base(chaineDeConnexion)
     {
-        carteDao = carteMysqlDao;
+        CarteDao = carteMysqlDao;
     }
 
     public Liste? Select(int id)
@@ -160,7 +160,8 @@ public class ListeMysqlDao : MysqlBaseDao, IListeDao
                 reader.GetInt32("id"),
                 reader.GetString("nom"),
                 reader.GetInt32("ordre"),
-                reader.GetInt32("tableau_id")
+                reader.GetInt32("tableau_id"),
+                CarteDao.SelectAllByListeId(reader.GetInt32("id"))
             );
     }
 }
