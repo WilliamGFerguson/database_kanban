@@ -74,9 +74,10 @@ Console.WriteLine($"Type de la persistance : {typePersistance}");
 // Création et alimentation (seeding) de la BD
 if (creerBd && gestionPersistance != null)
 {
-    Console.WriteLine("Alimentation de la solution de persistance...");
+    Console.WriteLine("\nAlimentation de la solution de persistance...");
     gestionPersistance.CreerPersistanceEtInsererDonnees();
 }
+
 //////////////////////////////////////////////// ET CE TERMINE ICI /////////////////////////////////////////////////////
 
 builder.Services.AddAutoMapper(typeof(ConfigurationMapping));

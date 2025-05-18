@@ -157,6 +157,7 @@ public class ListeMysqlDao : MysqlBaseDao, IListeDao
     private Liste BuildEntity(MySqlDataReader reader)
     {
         return new Liste(
+                reader.GetInt32("id"),
                 reader.GetString("nom"),
                 reader.GetInt32("ordre"),
                 reader.GetInt32("tableau_id")

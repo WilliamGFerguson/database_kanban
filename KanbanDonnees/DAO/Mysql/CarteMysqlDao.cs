@@ -163,6 +163,7 @@ public class CarteMysqlDao : MysqlBaseDao, ICarteDao
     private Carte BuildEntity(MySqlDataReader reader)
     {
         Carte carte = new Carte(
+                reader.GetInt32("id"),
                 reader.GetString("titre"),
                 reader.GetString("description"),
                 reader.GetDateTime("echeance"),

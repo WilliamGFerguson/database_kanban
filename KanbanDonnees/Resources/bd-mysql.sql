@@ -1,5 +1,4 @@
-DROP DATABASE IF EXISTS `projet`;
-CREATE DATABASE `projet`;
+CREATE DATABASE IF NOT EXISTS `projet`;
 USE `projet`;
 
 CREATE TABLE `utilisateur`

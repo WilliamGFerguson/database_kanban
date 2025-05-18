@@ -6,7 +6,7 @@ namespace KanbanDonnees.DAO.Mysql;
 
 public class TableauMysqlDao : MysqlBaseDao, ITableauDao
 {
-    private ListeMysqlDao ListeDao;
+    private readonly ListeMysqlDao ListeDao;
 
     public TableauMysqlDao(string chaineDeConnexion, ListeMysqlDao listeDao) : base(chaineDeConnexion)
     {
@@ -100,6 +100,7 @@ public class TableauMysqlDao : MysqlBaseDao, ITableauDao
 
     public Tableau Update(Tableau tableau)
     {
+        Console.WriteLine($"Update id = {tableau.Id}");
         using MySqlConnection connection = OuvrirConnexion();
         try
         {
@@ -151,6 +152,7 @@ public class TableauMysqlDao : MysqlBaseDao, ITableauDao
     private Tableau BuildEntity(MySqlDataReader reader)
     {
         return new Tableau(
+                reader.GetInt32("id"),
                 reader.GetString("nom")
             );
     }
