@@ -1,6 +1,7 @@
 ﻿using KanbanDonnees.DAO.Interfaces;
 using KanbanDonnees.Entities;
 using MySql.Data.MySqlClient;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 namespace KanbanDonnees.DAO.Mysql;
 
 public class ListeMysqlDao : MysqlBaseDao, IListeDao
@@ -111,6 +112,7 @@ public class ListeMysqlDao : MysqlBaseDao, IListeDao
                 "SET nom = @nom, ordre = @ordre, tableau_id = @tableau_id " +
                 "WHERE id = @id";
             using MySqlCommand commande = new MySqlCommand(query, connection);
+            commande.Parameters.AddWithValue("@id", liste.Id);
             commande.Parameters.AddWithValue("@nom", liste.Nom);
             commande.Parameters.AddWithValue("@ordre", liste.Ordre);
             commande.Parameters.AddWithValue("@tableau_id", liste.TableauId);

@@ -59,10 +59,6 @@ public class TableauMysqlDao : MysqlBaseDao, ITableauDao
             {
                 tableaux.Add(BuildEntity(reader));
             }
-            foreach (Tableau tableau in tableaux)
-            {
-                Console.WriteLine(tableau.ToString()); ;
-            }
         }
         catch (Exception ex)
         {
@@ -104,7 +100,6 @@ public class TableauMysqlDao : MysqlBaseDao, ITableauDao
 
     public Tableau Update(Tableau tableau)
     {
-        Console.WriteLine($"Update id = {tableau.Id}");
         using MySqlConnection connection = OuvrirConnexion();
         try
         {

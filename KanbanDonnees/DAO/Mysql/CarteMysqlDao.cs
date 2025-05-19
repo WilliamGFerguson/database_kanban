@@ -81,11 +81,11 @@ public class CarteMysqlDao : MysqlBaseDao, ICarteDao
                 "INSERT INTO carte (titre, description, echeance, ordre, liste_id) " +
                 "VALUES (@titre, @description, @echeance, @ordre, @liste_id)";
             using MySqlCommand commande = new MySqlCommand(query, connection);
-            commande.Parameters.AddWithValue("titre", carte.Titre);
-            commande.Parameters.AddWithValue("description", carte.Description);
-            commande.Parameters.AddWithValue("echeance", carte.Echeance);
-            commande.Parameters.AddWithValue("ordre", carte.Ordre);
-            commande.Parameters.AddWithValue("liste_id", carte.ListeId);
+            commande.Parameters.AddWithValue("@titre", carte.Titre);
+            commande.Parameters.AddWithValue("@description", carte.Description);
+            commande.Parameters.AddWithValue("@echeance", carte.Echeance);
+            commande.Parameters.AddWithValue("@ordre", carte.Ordre);
+            commande.Parameters.AddWithValue("@liste_id", carte.ListeId);
             commande.Prepare();
 
             int rangeesAffectees = commande.ExecuteNonQuery();
@@ -109,19 +109,8 @@ public class CarteMysqlDao : MysqlBaseDao, ICarteDao
         try
         {
             connection.Open();
-            string query = "UPDATE carte " +
-                "SET titre = @titre, description = @description, echeance = @echeance, ordre = @ordre, liste_id = @liste_id " +
-                "WHERE id = @id";
-            using MySqlCommand commande = new MySqlCommand(query, connection);
-            commande.Parameters.AddWithValue("titre", carte.Titre);
-            commande.Parameters.AddWithValue("description", carte.Description);
-            commande.Parameters.AddWithValue("echeance", carte.Echeance);
-            commande.Parameters.AddWithValue("ordre", carte.Ordre);
-            commande.Parameters.AddWithValue("liste_id", carte.ListeId);
-            commande.Prepare();
-
-            int rangeesAffectees = commande.ExecuteNonQuery();
-            if (rangeesAffectees != 1) throw new Exception($"Impossible de mettre à jour la carte '{carte.Titre}'.");
+            UpdateCarte(carte, connection);
+            UpdateCarteUser(carte, connection);
         }
         catch (Exception ex)
         {
@@ -166,12 +155,60 @@ public class CarteMysqlDao : MysqlBaseDao, ICarteDao
                 reader.GetInt32("id"),
                 reader.GetString("titre"),
                 reader.GetString("description"),
-                reader.GetDateTime("echeance"),
+                reader["echeance"] == DBNull.Value ? null : reader.GetDateTime("echeance"),
                 reader.GetInt32("ordre"),
                 reader.GetInt32("liste_id"),
                 UtilisateurDao.SelectAllByCarteId(reader.GetInt32("id"))
             );
 
         return carte;
+    }
+
+    private void UpdateCarte(Carte carte, MySqlConnection connection)
+    {
+        string queryCarte = "UPDATE carte " +
+                "SET titre = @titre, description = @description, echeance = @echeance, ordre = @ordre, liste_id = @liste_id " +
+                "WHERE id = @id";
+            using MySqlCommand cmdCarte = new MySqlCommand(queryCarte, connection);
+            cmdCarte.Parameters.AddWithValue("@id", carte.Id);
+            cmdCarte.Parameters.AddWithValue("@titre", carte.Titre);
+            cmdCarte.Parameters.AddWithValue("@description", carte.Description);
+            cmdCarte.Parameters.AddWithValue("@echeance", carte.Echeance);
+            cmdCarte.Parameters.AddWithValue("@ordre", carte.Ordre);
+            cmdCarte.Parameters.AddWithValue("@liste_id", carte.ListeId);
+            cmdCarte.Prepare();
+
+            int rangeesAffectees = cmdCarte.ExecuteNonQuery();
+            if (rangeesAffectees != 1) throw new Exception($"Impossible de mettre à jour la carte {carte.Id}.");
+    }
+
+    private void UpdateCarteUser(Carte carte, MySqlConnection connection)
+    {
+        int rangeesAffectees = 0;
+        if (carte.Responsables.Count == 0)
+        {
+            string deleteQuery = "DELETE FROM carte_utilisateur WHERE carte_id = @carteId;";
+
+            using MySqlCommand deleteCommande = new MySqlCommand(deleteQuery, connection);
+            deleteCommande.Parameters.AddWithValue("@carteId", carte.Id);
+            deleteCommande.Prepare();
+            deleteCommande.ExecuteNonQuery();
+
+            rangeesAffectees = deleteCommande.ExecuteNonQuery();
+            if (rangeesAffectees <= 0) throw new Exception($"Impossible de supprimer les utilisateurs de la carte {carte.Id}.");
+        }
+
+        foreach (Utilisateur u in carte.Responsables)
+        {
+            rangeesAffectees = 0;
+            string insertQuery = $"INSERT INTO carte_utilisateur VALUES (@userId, @carteId)";
+            using MySqlCommand insertCommande = new MySqlCommand(insertQuery, connection);
+            insertCommande.Parameters.AddWithValue("@userId", u.Id);
+            insertCommande.Parameters.AddWithValue("@carteId", carte.Id);
+            insertCommande.Prepare();
+
+            rangeesAffectees = insertCommande.ExecuteNonQuery();
+            if (rangeesAffectees != 1) throw new Exception($"Impossible d'ajouter l'utilisateur {u.Id} à la carte {carte.Id}");
+        }
     }
 }
