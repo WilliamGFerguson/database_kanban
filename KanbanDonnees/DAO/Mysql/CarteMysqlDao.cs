@@ -184,31 +184,21 @@ public class CarteMysqlDao : MysqlBaseDao, ICarteDao
 
     private void UpdateCarteUser(Carte carte, MySqlConnection connection)
     {
-        int rangeesAffectees = 0;
-        if (carte.Responsables.Count == 0)
-        {
-            string deleteQuery = "DELETE FROM carte_utilisateur WHERE carte_id = @carteId;";
+        string deleteQuery = "DELETE FROM carte_utilisateur WHERE carte_id = @carteId;";
 
-            using MySqlCommand deleteCommande = new MySqlCommand(deleteQuery, connection);
-            deleteCommande.Parameters.AddWithValue("@carteId", carte.Id);
-            deleteCommande.Prepare();
-            deleteCommande.ExecuteNonQuery();
-
-            rangeesAffectees = deleteCommande.ExecuteNonQuery();
-            if (rangeesAffectees <= 0) throw new Exception($"Impossible de supprimer les utilisateurs de la carte {carte.Id}.");
-        }
+        using MySqlCommand deleteCommande = new MySqlCommand(deleteQuery, connection);
+        deleteCommande.Parameters.AddWithValue("@carteId", carte.Id);
+        deleteCommande.Prepare();
+        deleteCommande.ExecuteNonQuery();
 
         foreach (Utilisateur u in carte.Responsables)
         {
-            rangeesAffectees = 0;
-            string insertQuery = $"INSERT INTO carte_utilisateur VALUES (@userId, @carteId)";
+            string insertQuery = "INSERT INTO carte_utilisateur VALUES (@userId, @carteId)";
             using MySqlCommand insertCommande = new MySqlCommand(insertQuery, connection);
             insertCommande.Parameters.AddWithValue("@userId", u.Id);
             insertCommande.Parameters.AddWithValue("@carteId", carte.Id);
             insertCommande.Prepare();
-
-            rangeesAffectees = insertCommande.ExecuteNonQuery();
-            if (rangeesAffectees != 1) throw new Exception($"Impossible d'ajouter l'utilisateur {u.Id} à la carte {carte.Id}");
+            insertCommande.ExecuteNonQuery();
         }
     }
 }
