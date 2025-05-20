@@ -12,7 +12,6 @@ public abstract class MysqlBaseDao
 
     protected MySqlConnection OuvrirConnexion()
     {
-        MySqlConnection connection = new MySqlConnection(chaineDeConnexion);
-        return connection;
+        return new MySqlConnection(chaineDeConnexion);
     }
 }

@@ -2,6 +2,8 @@ using System.Globalization;
 using KanbanDonnees.DAO.EnMemoire;
 using KanbanDonnees.DAO.Interfaces;
 using KanbanDonnees.DAO.Mysql;
+using KanbanDonnees.DAO.Sqlite;
+
 // using KanbanDonnees.DAO.Sqlite;
 using KanbanWeb;
 
@@ -47,14 +49,14 @@ if (typePersistance == "mysql")
 // Utilisation de Sqlite
 else if (typePersistance == "sqlite")
 {
-    // builder.Services.AddScoped<IUtilisateurDao>(x => new UtilisateurSqliteDao(chaineDeConnexion));
-    // builder.Services.AddScoped<ICarteDao>(x =>
-    //     new CarteSqliteDao(chaineDeConnexion, (UtilisateurSqliteDao)x.GetRequiredService<IUtilisateurDao>()));
-    // builder.Services.AddScoped<IListeDao>(x =>
-    //     new ListeSqliteDao(chaineDeConnexion, (CarteSqliteDao)x.GetRequiredService<ICarteDao>()));
-    // builder.Services.AddScoped<ITableauDao>(x =>
-    //     new TableauSqliteDao(chaineDeConnexion, (ListeSqliteDao)x.GetRequiredService<IListeDao>()));
-    // gestionPersistance = new GestionPersistanceSqlite(chaineDeConnexion);
+    builder.Services.AddScoped<IUtilisateurDao>(x => new UtilisateurSqliteDao(chaineDeConnexion));
+    builder.Services.AddScoped<ICarteDao>(x =>
+        new CarteSqliteDao(chaineDeConnexion, (UtilisateurSqliteDao)x.GetRequiredService<IUtilisateurDao>()));
+    builder.Services.AddScoped<IListeDao>(x =>
+        new ListeSqliteDao(chaineDeConnexion, (CarteSqliteDao)x.GetRequiredService<ICarteDao>()));
+    builder.Services.AddScoped<ITableauDao>(x =>
+        new TableauSqliteDao(chaineDeConnexion, (ListeSqliteDao)x.GetRequiredService<IListeDao>()));
+    gestionPersistance = new GestionPersistanceSqlite(chaineDeConnexion);
 }
 // Utilisation de la persistance en mémoire
 else if (typePersistance == "memoire")
